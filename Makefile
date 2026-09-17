@@ -1,4 +1,10 @@
-MODEL ?= qwen3:8b
+MODEL ?= dolphin-llama3:8B
+
+# dolphin-llama3:8B (uncensored waa3er + khfif)
+# qwen3:8b
+# Wizard-Vicuna-Uncensored
+# dolphin-mistral for coding tasks
+# hf.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF (hadra bzf +machi bsah uncensored)
 
 .PHONY: help up pull run ask list ps bench logs down clean
 
@@ -15,11 +21,20 @@ pull:
 run:
 	docker compose exec ollama ollama run $(MODEL)
 
+run-fast: ## Interactive chat, thinking disabled
+	docker compose exec ollama ollama run --think=false $(MODEL)
+
 ask: ## One API request (Q="your question")
 	@curl -s http://localhost:11434/v1/chat/completions \
 	  -H 'Content-Type: application/json' \
 	  -d '{"model":"$(MODEL)","messages":[{"role":"user","content":"$(or $(Q),Say hello in one sentence)"}],"stream":false}' \
 	  | jq -r '.choices[0].message.content'
+
+ask-fast: ## Ask with thinking disabled
+	@curl -s http://localhost:11434/api/chat \
+	  -H 'Content-Type: application/json' \
+	  -d '{"model":"$(MODEL)","messages":[{"role":"user","content":"$(or $(Q),Say hello)"}],"think":false,"stream":false}' \
+	  | jq -r '.message.content'
 
 list: ## Models downloaded
 	docker compose exec ollama ollama list
