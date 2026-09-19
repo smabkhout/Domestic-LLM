@@ -6,7 +6,7 @@ MODEL ?= dolphin-llama3:8B
 # dolphin-mistral for coding tasks
 # hf.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF (hadra bzf +machi bsah uncensored)
 
-.PHONY: help up pull run ask list ps bench logs down clean
+.PHONY: help up pull run ask list ps bench logs down clean up-gpu gpu-check serve claude
 
 help:
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/\t/'
@@ -47,6 +47,19 @@ bench: ## Speed test for MODEL
 
 logs: ## Follow logs
 	docker compose logs -f
+
+up-gpu: ## Start with NVIDIA GPU
+	docker compose -f compose.yaml -f compose.gpu.yaml up -d
+
+gpu-check: ## Verify GPU is visible in the container
+	docker compose exec ollama nvidia-smi
+
+serve: ## Start bound to LAN (see README security note)
+	BIND_ADDR=0.0.0.0 docker compose -f compose.yaml -f compose.gpu.yaml up -d
+	@echo "Serving on $$(hostname -I | awk '{print $$1}'):11434"
+
+claude: ## Claude Code against local/remote Ollama
+	@./scripts/claude-local.sh
 
 down: ## Stop (models kept)
 	docker compose down
