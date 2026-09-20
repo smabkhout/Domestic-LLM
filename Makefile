@@ -10,7 +10,7 @@ MODEL ?= qwen3-coder:30b
 # dolphin-mistral for coding tasks
 # hf.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF (hadra bzf +machi bsah uncensored)
 
-.PHONY: help up pull run ask list ps bench logs down clean up-gpu gpu-check serve claude
+.PHONY: help up pull run ask list ps bench logs down clean up-gpu gpu-check serve claude import import-all use models-available
 
 help:
 	@grep -E '^[a-z-]+:.##' $(MAKEFILE_LIST) | sed 's/:.##/\t/'
@@ -64,6 +64,21 @@ serve: ## Start bound to LAN (see README security note)
 
 claude: ## Claude Code against local/remote Ollama
 	@./scripts/claude-local.sh
+
+import: ## Register a custom model by name (NAME=turbo)
+	@./scripts/import-model.sh $(NAME)
+
+import-all: ## Register every modelfile in modelfiles/
+	@for f in modelfiles/*.Modelfile; do \
+	  ./scripts/import-model.sh $$(basename $$f .Modelfile); \
+	done
+
+use: ## Import if needed, then chat (NAME=turbo)
+	@./scripts/import-model.sh $(NAME)
+	@docker compose exec ollama ollama run $(NAME)
+
+models-available: ## List defined custom modelfiles
+	@ls modelfiles/*.Modelfile | xargs -n1 basename | sed 's/.Modelfile//'
 
 down: ## Stop (models kept)
 	docker compose down
