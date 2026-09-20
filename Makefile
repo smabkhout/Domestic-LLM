@@ -1,5 +1,9 @@
-MODEL ?= dolphin-llama3:8B
 
+MODEL ?= qwen3-coder:30b 
+
+#MODEL=hf.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF:Q4_K_M
+#MODEL=hf.co/OBLITERATUS/Qwen3.8-27B-OBLITERATED:Q4_K_M (khateeeeer)
+#qwen3-coder:30b (claude code )
 # dolphin-llama3:8B (uncensored waa3er + khfif)
 # qwen3:8b
 # Wizard-Vicuna-Uncensored
@@ -9,7 +13,7 @@ MODEL ?= dolphin-llama3:8B
 .PHONY: help up pull run ask list ps bench logs down clean up-gpu gpu-check serve claude
 
 help:
-	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/\t/'
+	@grep -E '^[a-z-]+:.##' $(MAKEFILE_LIST) | sed 's/:.##/\t/'
 
 up:
 	docker compose up -d

@@ -2,7 +2,10 @@
 set -euo pipefail
 
 HOST="${OLLAMA_HOST_URL:-http://localhost:11434}"
-MODEL="${MODEL:-qwen3-coder:30b}"
+MODEL="${MODEL:-hf.co/OBLITERATUS/Qwen3.8-27B-OBLITERATED:Q4_K_M}"
+#MODEL="${MODEL:-qwen3-coder:30b}"
+
+
 
 if ! curl -sf "${HOST}/api/tags" >/dev/null; then
   echo "error: no Ollama at ${HOST}" >&2
